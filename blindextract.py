@@ -33,7 +33,6 @@ def getlength(field,table,where):
 		else:
 			bit = 0
 		print "time:",_time,",bit:",bit
-
 	return accum
 
 def getbits(pos,field,table,where):
@@ -50,7 +49,6 @@ def getbits(pos,field,table,where):
 		else:
 			bit = 0
 		print "time:",_time,",bit:",bit
-	
 	return accum
 
 def getdata(field,table,where):
