@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Blind SQL extraction POC
+# SQL Blind data extraction POC
 # Author Dario Clavijo 2015
 
 import time,sys,os
