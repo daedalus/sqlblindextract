@@ -18,8 +18,7 @@ def measure(sql):
 	s_time = time.time();
 	cur.execute(sql)
 	e_time = time.time();
-	d_time = e_time - s_time
-	return d_time
+	return e_time - s_time
 
 def getlength(field,table,where):
 	accum = 0
