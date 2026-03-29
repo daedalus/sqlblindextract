@@ -10,7 +10,7 @@
 ## Install
 
 ```bash
-pip install sqlblindextract
+pip install .
 ```
 
 ## Usage
