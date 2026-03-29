@@ -1,0 +1,93 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sqlblindextract"
+version = "0.1.0"
+description = "A tool for blind SQL injection data extraction using timing-based techniques"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Dario Clavijo", email = "clavijodario@gmail.com"}
+]
+dependencies = [
+    "click",
+]
+
+[project.optional-dependencies]
+mysql = ["mysqlclient"]
+dev = [
+    "ruff",
+    "mypy",
+    "hatch",
+    "pip-api",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "pytest-asyncio",
+    "hypothesis",
+]
+lint = [
+    "ruff",
+    "mypy",
+]
+all = ["sqlblindextract[dev,test,lint]"]
+
+[project.scripts]
+sqlblindextract = "sqlblindextract.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/daedalus/sqlblindextract"
+Repository = "https://github.com/daedalus/sqlblindextract"
+Issues = "https://github.com/daedalus/sqlblindextract/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sqlblindextract"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/sqlblindextract"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "ANN", "TCH", "N", "C4", "ARG"]
+ignore = ["E501", "ANN401", "ANN201", "ANN001", "ANN202"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "ANN202"]
+"tests/*" = ["ANN", "ARG"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short --cov=src --cov-fail-under=50"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+exclude = ["tests/*", "*/__init__.py"]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
